@@ -11,14 +11,37 @@ public:
 	LevelManager();
 	~LevelManager();
 
-	void loadLv0();
+	void LoadLevel(int lvl);
 	void Draw(sf::RenderWindow &window);
 
 private:
 	const int COLUMNS = 6;
 	const int ROWS = 6;
 
-	const int num = 36;
 	Brick* Bricks;
+
+	const int num = 36;
+	const int leveldata[3][36] = {
+		{ 1, 1, 0, 0, 0, 0,
+		0, 1, 1, 1, 0, 0,
+		0, 0, 1, 1, 1, 0,
+		0, 0, 0, 0, 1, 1,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0 },
+
+		{ 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 0, 0, 0,
+		0, 1, 1, 1, 0, 0,
+		0, 0, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1,
+		1, 1, 1, 1, 1, 1 },
+
+		{ 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 1, 1, 1, 1, 0,
+		0, 0, 0, 0, 0, 0, 
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0 }
+	};
 };
 

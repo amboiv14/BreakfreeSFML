@@ -8,6 +8,8 @@ Ball::Ball(float x, float y, float width, float height):GameObject(x, y, width, 
 	//ball.setTextureRect(sf::IntRect(0, 0, 16, 16));
 	//centerPivotPoint();
 	ResetBall(x, y);
+
+	//TODO: sprite.setOrigin(8, 8);
 }
 
 

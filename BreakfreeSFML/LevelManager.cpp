@@ -11,11 +11,9 @@ LevelManager::~LevelManager()
 
 extern sf::RenderWindow window;
 
-void LevelManager::loadLv0()
+void LevelManager::LoadLevel(int lvl)
 {
 	float x = 0, y = 0;
-	int placed = 0;
-
 	Bricks = new Brick[num];
 
 	for (int i = 0; i < num; i++)
@@ -25,9 +23,11 @@ void LevelManager::loadLv0()
 			y += 32;
 			x = 0;
 		}
-		Bricks[i] = *new Brick(1);
 
+		if (leveldata[lvl][i] != 0)
+		Bricks[i] = *new Brick(leveldata[lvl][i]);
 		Bricks[i].sprite.move(x, y);
+
 		x += 128;
 	}
 }

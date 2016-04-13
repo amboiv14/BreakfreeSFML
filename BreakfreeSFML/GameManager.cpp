@@ -61,9 +61,9 @@ void GameManager::runGame()
 		switch (level)
 		{
 		case 0:
-			levelManager.loadLv0();
 			break;
 		}
+		levelManager.LoadLevel(level);
 
 		while (isPlaying)
 		{
