@@ -13,12 +13,18 @@ public:
 
 	void LoadLevel(int lvl);
 	void Draw(sf::RenderWindow &window);
+	int getNum();
+	int getLevelData(int lvl, int numOfPositions);
+
+	Brick* Bricks;
+	int brickCount = 0;
+	int currentLevel = 0;
 
 private:
 	const int COLUMNS = 6;
 	const int ROWS = 6;
 
-	Brick* Bricks;
+	
 
 	const int num = 36;
 	const int leveldata[3][36] = {

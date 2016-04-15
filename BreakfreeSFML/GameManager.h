@@ -15,9 +15,10 @@ public:
 
 	bool init();
 	void CheckPaddleOutOfBounds();
+	void CheckBrickCollisions();
 	void runGame();
 	void CheckPaddleCollisions() const;
-	void CheckBoardCollisions();
+	void CheckBoardCollisions() const;
 	float GetReflection(float hitx) const;
 
 	const int SCREEN_WIDTH = 768;
@@ -37,6 +38,7 @@ private:
 	sf::Clock timer;
 	sf::Time deltaTime;
 
+	LevelManager* levelManager;
 	Paddle* paddle;
 
 	bool isPlaying = true;
