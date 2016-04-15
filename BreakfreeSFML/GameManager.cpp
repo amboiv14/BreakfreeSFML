@@ -42,6 +42,18 @@ void GameManager::CheckPaddleOutOfBounds()
 	}
 }
 
+void GameManager::winLevel()
+{
+	std::cout << "Cleared level!" << std::endl;
+	if (!levelManager->loadNextLevel())
+	{
+		std::cout << "You won The game!" << std::endl;
+		isPlaying = false;
+		return;
+	}
+	paddle->ResetPaddle();
+}
+
 void GameManager::runGame()
 {
 	levelManager = new LevelManager;
@@ -58,15 +70,23 @@ void GameManager::runGame()
 				window.close();
 		}
 
-		switch (level)
+		/*switch (level)
 		{
 		case 0:
 			break;
+		}*/
+
+		if (!levelManager->LoadLevel(level))
+		{
+			winLevel();
 		}
-		levelManager->LoadLevel(level);
 
 		while (isPlaying)
 		{
+			if (levelManager->brickCount <= 0)
+			{
+				winLevel();
+			}
 			deltaTime = timer.restart();
 			inputManager.ExecuteEvents(window);
 
@@ -95,6 +115,7 @@ void GameManager::runGame()
 
 			window.display(); // -----------------------
 		}
+		window.close();
 	}
 }
 
@@ -169,7 +190,7 @@ void GameManager::CheckBrickCollisions()
 	for (int i = 0; i < levelManager->getNum(); i++)
 	{
 		//std::cout << i;
-		if (levelManager->getLevelData(currentLevel, i) != 0) 
+		if (levelManager->getLevelData(currentLevel, i) != 0 && levelManager->Bricks[i].isActive) 
 		{
 			float vicinityX = (levelManager->Bricks[i].width / 2) + (paddle->ball->width / 2);
 			float vicinityY = (levelManager->Bricks[i].height / 2) + (paddle->ball->height / 2);
@@ -186,6 +207,7 @@ void GameManager::CheckBrickCollisions()
 			{
 				if (ballCenterX <= brickCenterX + vicinityX && ballCenterX >= brickCenterX - vicinityX)
 				{
+					levelManager->destroyBrick(i);
 					//Tror denne burde være minst like stor som ballens movement speed, men ikke FOR stor
 					float sideWallPerimeter = 5.f;
 					if (ballCenterX + vicinityX <= brickCenterX + sideWallPerimeter)
@@ -220,66 +242,7 @@ void GameManager::CheckBrickCollisions()
 		}
 	}
 }
-
-/*void Game::BallBrickResponse(int dirindex) {
-	// dirindex 0: Left, 1: Top, 2: Right, 3: Bottom
-
-	// Direction factors
-	int mulx = 1;
-	int muly = 1;
-
-	if (ball->dirx > 0) {
-		// Ball is moving in the positive x direction
-		if (ball->diry > 0) {
-			// Ball is moving in the positive y direction
-			// +1 +1
-			if (dirindex == 0 || dirindex == 3) {
-				mulx = -1;
-			}
-			else {
-				muly = -1;
-			}
-		}
-		else if (ball->diry < 0) {
-			// Ball is moving in the negative y direction
-			// +1 -1
-			if (dirindex == 0 || dirindex == 1) {
-				mulx = -1;
-			}
-			else {
-				muly = -1;
-			}
-		}
-	}
-	else if (ball->dirx < 0) {
-		// Ball is moving in the negative x direction
-		if (ball->diry > 0) {
-			// Ball is moving in the positive y direction
-			// -1 +1
-			if (dirindex == 2 || dirindex == 3) {
-				mulx = -1;
-			}
-			else {
-				muly = -1;
-			}
-		}
-		else if (ball->diry < 0) {
-			// Ball is moving in the negative y direction
-			// -1 -1
-			if (dirindex == 1 || dirindex == 2) {
-				mulx = -1;
-			}
-			else {
-				muly = -1;
-			}
-		}
-	}
-
-	// Set the new direction of the ball, by multiplying the old direction
-	// with the determined direction factors
-	ball->SetDirection(mulx*ball->dirx, muly*ball->diry);
-}
-
+/*
 int Game::GetBrickCount() {
 	int brickcount = 0;
 	for (int i = 0; i<BOARD_WIDTH; i++) {
@@ -306,7 +269,6 @@ int main()
 	}
 
 
-	
 	delete gameManager;
 
 	return 0;

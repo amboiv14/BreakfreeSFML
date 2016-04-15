@@ -11,9 +11,15 @@ LevelManager::~LevelManager()
 
 extern sf::RenderWindow window;
 
-void LevelManager::LoadLevel(int lvl)
+bool LevelManager::LoadLevel(int lvl)
 {
 	currentLevel = lvl;
+	if (currentLevel > NUMBER_OF_LEVELS - 1)
+	{
+
+		return false;
+	}
+	
 	float x = 0, y = 0;
 	Bricks = new Brick[num];
 
@@ -35,6 +41,7 @@ void LevelManager::LoadLevel(int lvl)
 		
 		x += 128;
 	}
+	return true;
 }
 
 void LevelManager::Draw(sf::RenderWindow &window)
@@ -50,6 +57,25 @@ void LevelManager::Draw(sf::RenderWindow &window)
 int LevelManager::getNum()
 {
 	return num;
+}
+
+void LevelManager::destroyBrick(int index)
+{
+	if (Bricks[index].isActive)
+	{
+		Bricks[index].isActive = false;
+		brickCount--;
+	}
+}
+
+bool LevelManager::loadNextLevel()
+{
+	bool couldLoadNext = true;
+	if (!LoadLevel(currentLevel + 1))
+	{
+		couldLoadNext = false;
+	}
+	return couldLoadNext;
 }
 
 int LevelManager::getLevelData(int lvl, int numOfPositions)

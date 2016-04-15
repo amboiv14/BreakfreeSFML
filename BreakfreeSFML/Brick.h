@@ -14,6 +14,8 @@ public:
 	void Update();
 	void Draw(sf::RenderWindow &window);
 
+	bool isActive = false;
+
 	sf::Texture texture;
 	sf::Sprite sprite;
 };

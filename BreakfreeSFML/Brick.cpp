@@ -13,6 +13,7 @@ Brick::Brick(int type, float x, float y, float width, float height):GameObject(x
 	if (!texture.loadFromFile("Textures/brick" + std::to_string(type) + ".png"))
 		abort();
 	sprite.setTexture(texture);
+	isActive = true;
 	//sprite.setTextureRect(sf::IntRect(x, y, width, height));
 }
 
@@ -33,5 +34,8 @@ void Brick::Update()
 
 void Brick::Draw(sf::RenderWindow &window)
 {
-	window.draw(sprite);
+	if (isActive)
+	{
+		window.draw(sprite);
+	}
 }
