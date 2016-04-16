@@ -13,7 +13,10 @@ Paddle::Paddle(float x, float y, float width, float height):GameObject(x, y, wid
 	ball = new Ball(x, y - height - 1, height, height);
 	ResetPaddle();
 	std::cout << "paddles pos: x = " << x << " y = " << y << std::endl;
-	
+
+	if (!buffer.loadFromFile("Sounds/sfxRelease.wav"))
+		abort();
+	sfxRelease.setBuffer(buffer);
 }
 
 Paddle::~Paddle()
@@ -53,6 +56,7 @@ void Paddle::Update(const sf::Time *deltaTime)
 void Paddle::ReleaseBall()
 {
 	ballStuck = false;
+	sfxRelease.play();
 }
 
 void Paddle::ResetPaddle()

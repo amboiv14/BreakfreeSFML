@@ -27,6 +27,17 @@ bool GameManager::init()
 		isInitSuccessfull = false;
 		std::cout << "Could not load score font" << std::endl;
 	}
+
+	if (!buf_hit0.loadFromFile("Sounds/sfxHit0.wav"),
+		!buf_hit1.loadFromFile("Sounds/sfxHit1.wav"),
+		!buf_hit2.loadFromFile("Sounds/sfxHit2.wav"),
+		!buf_paddle.loadFromFile("Sounds/sfxPaddle.wav"))
+		abort();
+	sfxHit0.setBuffer(buf_hit0);
+	sfxHit1.setBuffer(buf_hit1);
+	sfxHit2.setBuffer(buf_hit2);
+	sfxPaddle.setBuffer(buf_paddle);
+
 	return isInitSuccessfull;
 }
 
@@ -54,6 +65,7 @@ void GameManager::winLevel()
 	{
 		std::cout << "You won The game!" << std::endl;
 		isPlaying = false;
+		gameState = 3;
 		return;
 	}
 	paddle->ResetPaddle();
@@ -61,67 +73,206 @@ void GameManager::winLevel()
 
 void GameManager::runGame()
 {
-	levelManager = new LevelManager;
 	InputManager inputManager;
-	paddle = new Paddle(300, 550, 128, 16);
+	//now = sf::Time::Zero;
+	//nextUpdates = sf::seconds(1.f / 60.f);
 	//Ball ball;
 
 	while (window.isOpen())
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-
 		/*switch (level)
 		{
 		case 0:
-			break;
+		break;
 		}*/
 
-		if (!levelManager->LoadLevel(level))
+		switch (gameState)
 		{
-			winLevel();
-		}
-
-		while (isPlaying)
+		case 0: // menu
 		{
-			if (levelManager->brickCount <= 0)
-			{
-				winLevel();
-			}
-			deltaTime = timer.restart();
-			inputManager.ExecuteEvents(window);
-
-			paddle->Update(&deltaTime);
-			paddle->ball->Update(&deltaTime);
-
-			//Collision Checking
-			CheckBoardCollisions();
-			CheckPaddleCollisions();
-			CheckPaddleOutOfBounds();
-			CheckBrickCollisions();
-
-
-			window.clear(); // ------draw graphics here-------
-
-			sf::Text text("Score: " + std::to_string(score), font, 20);
-			text.setPosition(660, 220);
-			window.draw(text);
-
-			levelManager->Draw(window);
-			window.draw(paddle->sprite);
-			window.draw(paddle->ball->sprite);
-
-			std::string title = "Breakfree!      FPS: " + std::to_string(1.f / deltaTime.asSeconds());
+			std::string title = "Breakfree!";
 			window.setTitle(title);
 
-			window.display(); // -----------------------
+			sf::Sprite bg, start, exit;
+			sf::Texture tex_bg, tex_start, tex_exit;
+
+			if (!tex_bg.loadFromFile("Textures/screenStart.png"),
+				!tex_start.loadFromFile("Textures/start.png"),
+				!tex_exit.loadFromFile("Textures/exit.png"))
+				abort();
+
+			bg.setTexture(tex_bg);
+			start.setTexture(tex_start);
+			exit.setTexture(tex_exit);
+
+			start.setPosition(112, 304);
+			exit.setPosition(80, 361);
+			exit.setScale(0.6, 0.6);
+
+			sf::Mouse mouse;
+
+			//sf::Text text("" + std::to_string(score), font, 10);
+			//text.setPosition(660, 220);
+			while (gameState == 0)
+			{
+				// events
+				sf::Event event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == sf::Event::Closed)
+						window.close();
+				}
+
+				//if (now > nextUpdates) // 60 fps updates
+				//{
+					//now -= nextUpdates;
+
+					if (exit.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+					{
+						exit.setScale(1, 1);
+						start.setScale(0.4, 0.4);
+						exit.setPosition(80, 341);
+						start.setPosition(80, 311);
+						if (mouse.isButtonPressed(mouse.Left))
+						{
+							window.close();
+						}
+						
+					}
+					else if (start.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+					{
+						/*if (exit.getScale().x > 0.6)
+						{
+							exit.scale(-0.05, -0.05);
+						}
+						if (start.getScale().x < 1)
+						{
+						start.scale(0.05, 0.05);
+						}
+						if (exit.getPosition().x > 80)
+						{
+						exit.move(-0.05, 0);
+						}
+						if (exit.getPosition().y > 361)
+						{
+						exit.move(0, -0.05);
+						}
+						if (start.getPosition().x < 112)
+						{
+						start.move(0.05, 0);
+						}
+						if (start.getPosition().y < 304)
+						{
+						start.move(0, 0.05);
+						}*/
+						exit.setScale(0.6, 0.6);
+						start.setScale(1, 1);
+						exit.setPosition(80, 361);
+						start.setPosition(112, 304);
+						if (mouse.isButtonPressed(mouse.Left))
+						{
+							gameState = 1;
+						}
+					}
+				//}
+				//now += timer.restart();
+
+
+				inputManager.ExecuteEvents(window);
+
+				// -- draw --
+				window.clear();
+
+				window.draw(bg);
+				window.draw(start);
+				window.draw(exit);
+
+				window.display();
+			}
 		}
-		window.close();
+		break;
+		case 1: // ingame
+		{
+			levelManager = new LevelManager;
+			paddle = new Paddle(300, 550, 128, 16);
+
+			/*switch (level)
+			{
+			case 0:
+			break;
+			}*/
+
+			while (gameState == 1)
+			{
+				// events
+				sf::Event event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == sf::Event::Closed)
+						window.close();
+				}
+
+				if (!levelManager->LoadLevel(level))
+				{
+					winLevel();
+				}
+				while (isPlaying)
+				{
+					if (levelManager->brickCount <= 0)
+					{
+						winLevel();
+					}
+					deltaTime = timer.restart();
+					inputManager.ExecuteEvents(window);
+
+					paddle->Update(&deltaTime);
+					paddle->ball->Update(&deltaTime);
+
+					// collision checking
+					CheckBoardCollisions();
+					CheckPaddleCollisions();
+					CheckPaddleOutOfBounds();
+					CheckBrickCollisions();
+
+
+					// -- draw --
+					window.clear();
+
+					sf::Text text("Score: " + std::to_string(score), font, 20);
+					text.setPosition(660, 220);
+					window.draw(text);
+
+					levelManager->Draw(window);
+					window.draw(paddle->sprite);
+					window.draw(paddle->ball->sprite);
+
+					std::string title = "Breakfree!      FPS: " + std::to_string(1.f / deltaTime.asSeconds());
+					window.setTitle(title);
+
+					window.display();
+				}
+			}
+		}
+		break;
+		case 2: // game over
+			break;
+		case 3: // won the game
+			while (gameState == 3)
+			{
+				// draw
+				window.clear();
+
+				sf::Text text("YOU WON THE GAME", font, 40);
+				text.setPosition(260, 220);
+				window.draw(text);
+
+				window.display();
+			}
+			break;
+		}
 	}
+
+	window.close();
 }
 
 float GameManager::GetReflection(float hitx) const
@@ -143,7 +294,7 @@ float GameManager::GetReflection(float hitx) const
 	return 2.0f * (hitx / (paddle->width / 2.0f));
 }
 
-void GameManager::CheckPaddleCollisions() const
+void GameManager::CheckPaddleCollisions() // TODO: måtte fjerne const for å spille av lyd??
 {
 	// Get the center x-coordinate of the ball
 	float ballcenterx = paddle->ball->x + paddle->ball->width / 2.0f;
@@ -153,12 +304,12 @@ void GameManager::CheckPaddleCollisions() const
 	{
 		paddle->ball->y = paddle->y - paddle->ball->height;
 		paddle->ball->SetDirection(GetReflection(ballcenterx - paddle->x), -1);
-		
+		sfxPaddle.play();
 		//ball->SetDirection(0, -1);
 	}
 }
 
-void GameManager::CheckBoardCollisions() const
+void GameManager::CheckBoardCollisions()
 {
 	// Top and bottom collisions
 	if (paddle->ball->y < 0.f) {
@@ -166,12 +317,14 @@ void GameManager::CheckBoardCollisions() const
 		// Keep the ball within the board and reflect the y-direction
 		paddle->ball->y = 0.f;
 		paddle->ball->direction.y = 1;
+		sfxHit0.play();
 	}
 	else if (paddle->ball->y + paddle->ball->height > SCREEN_HEIGHT) {
 		// Bottom
 
 		// Ball lost
 		paddle->ResetPaddle();
+		// TODO: deep sound nedtur sfx
 	}
 
 	// Left and right collisions
@@ -180,12 +333,14 @@ void GameManager::CheckBoardCollisions() const
 		// Keep the ball within the board and reflect the x-direction
 		paddle->ball->x = 0.f;
 		paddle->ball->direction.x = 1;
+		sfxHit0.play();
 	}
 	else if (paddle->ball->x + paddle->ball->width >= SCREEN_WIDTH) {
 		// Right
 		// Keep the ball within the board and reflect the x-direction
 		paddle->ball->x = SCREEN_WIDTH - paddle->ball->width;
 		paddle->ball->direction.x = -1;
+		sfxHit0.play();
 	}
 }
 
@@ -217,7 +372,13 @@ void GameManager::CheckBrickCollisions()
 					{
 						addScore(levelManager->Bricks[i].getScore());
 						std::cout << "newScore: " << score << std::endl;
+						sfxHit1.play();
 					}
+					else
+					{
+						sfxHit2.play();
+					}
+
 					//Tror denne burde være minst like stor som ballens movement speed, men ikke FOR stor
 					float sideWallPerimeter = 5.f;
 					if (ballCenterX + vicinityX <= brickCenterX + sideWallPerimeter)

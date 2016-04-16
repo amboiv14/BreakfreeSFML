@@ -61,7 +61,7 @@ int LevelManager::getNum()
 	return num;
 }
 
-bool LevelManager::destroyBrick(int index)
+bool LevelManager::destroyBrick(int &index)
 {
 	if (Bricks[index].isActive && Bricks[index].getType() != 2)
 	{

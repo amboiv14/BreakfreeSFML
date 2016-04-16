@@ -21,10 +21,13 @@ public:
 	sf::Sprite sprite;
 	sf::Texture texture;
 
+	sf::Sound sfxRelease;
 private:
 	float speed = 250.f;
 
 	void SetSpeed(float newSpeed);
 	void centerPivotPoint();
+
+	sf::SoundBuffer buffer;
 };
 

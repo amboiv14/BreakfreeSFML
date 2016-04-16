@@ -19,8 +19,8 @@ public:
 	void winLevel();
 	void CheckBrickCollisions();
 	void runGame();
-	void CheckPaddleCollisions() const;
-	void CheckBoardCollisions() const;
+	void CheckPaddleCollisions();
+	void CheckBoardCollisions();
 	float GetReflection(float hitx) const;
 
 	const int SCREEN_WIDTH = 768;
@@ -30,6 +30,7 @@ private:
 	int score = 0;
 	int lives = 3;
 
+	int gameState = 0;
 	int level = 0;
 
 	sf::RenderWindow window;
@@ -39,10 +40,15 @@ private:
 
 	sf::Clock timer;
 	sf::Time deltaTime;
+	//sf::Time now;
+	//sf::Time nextUpdates;
 
 	LevelManager* levelManager;
 	Paddle* paddle;
 
 	bool isPlaying = true;
+
+	sf::SoundBuffer buf_hit0, buf_hit1, buf_hit2, buf_paddle;
+	sf::Sound sfxHit0, sfxHit1, sfxHit2, sfxPaddle;
 };
 
