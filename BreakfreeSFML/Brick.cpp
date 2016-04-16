@@ -10,9 +10,11 @@ Brick::Brick()
 
 Brick::Brick(int type, float x, float y, float width, float height):GameObject(x, y, width, height)
 {
+	this->type = type;
 	if (!texture.loadFromFile("Textures/brick" + std::to_string(type) + ".png"))
 		abort();
 	sprite.setTexture(texture);
+	score = 100 * type;
 	isActive = true;
 	//sprite.setTextureRect(sf::IntRect(x, y, width, height));
 }
@@ -38,4 +40,14 @@ void Brick::Draw(sf::RenderWindow &window)
 	{
 		window.draw(sprite);
 	}
+}
+
+int Brick::getType()
+{
+	return type;
+}
+
+int Brick::getScore()
+{
+	return score;
 }

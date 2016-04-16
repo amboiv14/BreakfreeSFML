@@ -16,7 +16,6 @@ bool LevelManager::LoadLevel(int lvl)
 	currentLevel = lvl;
 	if (currentLevel > NUMBER_OF_LEVELS - 1)
 	{
-
 		return false;
 	}
 	
@@ -32,10 +31,13 @@ bool LevelManager::LoadLevel(int lvl)
 		}
 
 		if (leveldata[lvl][i] != 0)
-		{
-			brickCount++;
+		{		
 			Bricks[i] = *new Brick(leveldata[lvl][i], x, y, 128, 32);
-			std::cout << "Brick " << i << " xPos = " << Bricks[i].x << " yPos = " << Bricks[i].y << std::endl;
+			if (Bricks[i].getType() != 2)
+			{
+				brickCount++;
+			}
+			std::cout << "Brick " << i << "type = " << Bricks[i].getType() << " xPos = " << Bricks[i].x << " yPos = " << Bricks[i].y << std::endl;
 		}
 		Bricks[i].sprite.setPosition(Bricks[i].x, Bricks[i].y);
 		
@@ -59,13 +61,15 @@ int LevelManager::getNum()
 	return num;
 }
 
-void LevelManager::destroyBrick(int index)
+bool LevelManager::destroyBrick(int index)
 {
-	if (Bricks[index].isActive)
+	if (Bricks[index].isActive && Bricks[index].getType() != 2)
 	{
 		Bricks[index].isActive = false;
 		brickCount--;
+		return true;
 	}
+	return false;
 }
 
 bool LevelManager::loadNextLevel()

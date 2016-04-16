@@ -42,6 +42,11 @@ void GameManager::CheckPaddleOutOfBounds()
 	}
 }
 
+void GameManager::addScore(int bonus)
+{
+	score += bonus;
+}
+
 void GameManager::winLevel()
 {
 	std::cout << "Cleared level!" << std::endl;
@@ -207,7 +212,12 @@ void GameManager::CheckBrickCollisions()
 			{
 				if (ballCenterX <= brickCenterX + vicinityX && ballCenterX >= brickCenterX - vicinityX)
 				{
-					levelManager->destroyBrick(i);
+					//Destroy and add brickScore to total score
+					if (levelManager->destroyBrick(i))
+					{
+						addScore(levelManager->Bricks[i].getScore());
+						std::cout << "newScore: " << score << std::endl;
+					}
 					//Tror denne burde være minst like stor som ballens movement speed, men ikke FOR stor
 					float sideWallPerimeter = 5.f;
 					if (ballCenterX + vicinityX <= brickCenterX + sideWallPerimeter)
@@ -242,22 +252,6 @@ void GameManager::CheckBrickCollisions()
 		}
 	}
 }
-/*
-int Game::GetBrickCount() {
-	int brickcount = 0;
-	for (int i = 0; i<BOARD_WIDTH; i++) {
-		for (int j = 0; j<BOARD_HEIGHT; j++) {
-			Brick brick = board->bricks[i][j];
-			if (brick.state) {
-				brickcount++;
-			}
-		}
-	}
-
-	return brickcount;
-}*/
-
-
 
 int main()
 {

@@ -13,10 +13,16 @@ public:
 	~Brick();
 	void Update();
 	void Draw(sf::RenderWindow &window);
+	int getType();
+	int getScore();
 
 	bool isActive = false;
 
 	sf::Texture texture;
 	sf::Sprite sprite;
+private:
+	//0 = none, 1 = normal, 2 = unbreakable
+	int type = 0;
+	int score = 0;
 };
 

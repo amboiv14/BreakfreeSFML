@@ -15,6 +15,7 @@ public:
 
 	bool init();
 	void CheckPaddleOutOfBounds();
+	void addScore(int bonus);
 	void winLevel();
 	void CheckBrickCollisions();
 	void runGame();

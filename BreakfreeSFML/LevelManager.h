@@ -14,7 +14,7 @@ public:
 	bool LoadLevel(int lvl);
 	void Draw(sf::RenderWindow &window);
 	int getNum();
-	void destroyBrick(int index);
+	bool destroyBrick(int index);
 	bool loadNextLevel();
 	int getLevelData(int lvl, int numOfPositions);
 
@@ -34,7 +34,7 @@ private:
 		{ 1, 1, 0, 0, 0, 0,
 		0, 1, 1, 1, 0, 0,
 		0, 0, 1, 1, 1, 0,
-		0, 0, 0, 0, 1, 1,
+		0, 0, 2, 0, 1, 1,
 		0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0 },
 
