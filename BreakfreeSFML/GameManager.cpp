@@ -1,5 +1,17 @@
 #include "GameManager.h"
 
+#include <assert.h>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+typedef char byte;
+
+template<typename T>
+byte* as_bytes(T* ptr) {
+	return reinterpret_cast<byte*>(ptr);
+}
 
 GameManager::GameManager()
 {
@@ -15,14 +27,14 @@ bool GameManager::init()
 	auto isInitSuccessfull = true;
 
 	window.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Breakfree");
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 
 	//Vi kan låse maks frame rate med denne
 	//window.setFramerateLimit(60);
 
 	//, sf::Style::Close|sf::Style::Titlebar);
 
-	if (!font.loadFromFile("Fonts/Nirmala.ttf"))
+	if (!font.loadFromFile("Fonts/visitor.ttf"))
 	{
 		isInitSuccessfull = false;
 		std::cout << "Could not load score font" << std::endl;
@@ -111,8 +123,6 @@ void GameManager::runGame()
 
 			sf::Mouse mouse;
 
-			//sf::Text text("" + std::to_string(score), font, 10);
-			//text.setPosition(660, 220);
 			while (gameState == 0)
 			{
 				// events
@@ -123,60 +133,29 @@ void GameManager::runGame()
 						window.close();
 				}
 
-				//if (now > nextUpdates) // 60 fps updates
-				//{
-					//now -= nextUpdates;
-
-					if (exit.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+				// mouse hover on buttons
+				if (exit.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+				{
+					exit.setScale(1, 1);
+					start.setScale(0.4, 0.4);
+					exit.setPosition(80, 341);
+					start.setPosition(80, 311);
+					if (mouse.isButtonPressed(mouse.Left))
 					{
-						exit.setScale(1, 1);
-						start.setScale(0.4, 0.4);
-						exit.setPosition(80, 341);
-						start.setPosition(80, 311);
-						if (mouse.isButtonPressed(mouse.Left))
-						{
-							window.close();
-						}
-						
+						window.close();
 					}
-					else if (start.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+				}
+				else if (start.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y))
+				{
+					exit.setScale(0.6, 0.6);
+					start.setScale(1, 1);
+					exit.setPosition(80, 361);
+					start.setPosition(112, 304);
+					if (mouse.isButtonPressed(mouse.Left))
 					{
-						/*if (exit.getScale().x > 0.6)
-						{
-							exit.scale(-0.05, -0.05);
-						}
-						if (start.getScale().x < 1)
-						{
-						start.scale(0.05, 0.05);
-						}
-						if (exit.getPosition().x > 80)
-						{
-						exit.move(-0.05, 0);
-						}
-						if (exit.getPosition().y > 361)
-						{
-						exit.move(0, -0.05);
-						}
-						if (start.getPosition().x < 112)
-						{
-						start.move(0.05, 0);
-						}
-						if (start.getPosition().y < 304)
-						{
-						start.move(0, 0.05);
-						}*/
-						exit.setScale(0.6, 0.6);
-						start.setScale(1, 1);
-						exit.setPosition(80, 361);
-						start.setPosition(112, 304);
-						if (mouse.isButtonPressed(mouse.Left))
-						{
-							gameState = 1;
-						}
+						gameState = 1;
 					}
-				//}
-				//now += timer.restart();
-
+				}
 
 				inputManager.ExecuteEvents(window);
 
@@ -200,14 +179,14 @@ void GameManager::runGame()
 			if (!theme.openFromFile("Audio/theme.ogg"))
 				abort();
 			theme.setVolume(80);
-			//theme.setLoop(true);
+			theme.setLoop(true);
 			theme.play();
 
-			/*switch (level)
-			{
-			case 0:
-			break;
-			}*/
+			sf::Sprite bg;
+			sf::Texture tex_bg;
+			if (!tex_bg.loadFromFile("Textures/bg.png"))
+				abort();
+			bg.setTexture(tex_bg);
 
 			while (gameState == 1)
 			{
@@ -245,9 +224,9 @@ void GameManager::runGame()
 					// -- draw --
 					window.clear();
 
+					window.draw(bg);
 					DrawGUI();
 					
-
 					levelManager->Draw(window);
 					window.draw(paddle->sprite);
 					window.draw(paddle->ball->sprite);
@@ -437,11 +416,11 @@ void GameManager::CheckBrickCollisions()
 
 void GameManager::DrawGUI()
 {
-	int GUIHeight = 220;
+	int GUIHeight = 576;
 	sf::Text GUILives("Lives x " + std::to_string(lives), font, 20);
 	sf::Text GUIScore("Score: " + std::to_string(score), font, 20);
-	GUILives.setPosition(20, GUIHeight);
-	GUIScore.setPosition(660, GUIHeight);
+	GUILives.setPosition(655, GUIHeight);
+	GUIScore.setPosition(20, GUIHeight);
 	window.draw(GUILives);
 	window.draw(GUIScore);
 }
