@@ -146,18 +146,9 @@ void GameManager::loadScores()
 void GameManager::runGame()
 {
 	InputManager inputManager;
-	//now = sf::Time::Zero;
-	//nextUpdates = sf::seconds(1.f / 60.f);
-	//Ball ball;
 
 	while (window.isOpen())
 	{
-		/*switch (level)
-		{
-		case 0:
-		break;
-		}*/
-
 		switch (gameState)
 		{
 		case 0: // menu
@@ -270,6 +261,8 @@ void GameManager::runGame()
 				abort();
 			bg.setTexture(tex_bg);
 
+			gameover = false;
+
 			while (gameState == 1)
 			{
 				// events
@@ -322,7 +315,6 @@ void GameManager::runGame()
 		}
 		break;
 		case 2: // game over
-			// no more time to make game over screen (23:45)
 			gameover = true;
 			gameState = 3;
 			break;
@@ -393,6 +385,7 @@ void GameManager::runGame()
 				// draw
 				window.clear();
 
+				if (!gameover)
 				window.draw(winbg);
 
 				window.draw(text);
@@ -445,7 +438,7 @@ void GameManager::loseLife()
 	paddle->ResetPaddle();
 }
 
-void GameManager::CheckPaddleCollisions() // TODO: måtte fjerne const for å spille av lyd??
+void GameManager::CheckPaddleCollisions()
 {
 	// Get the center x-coordinate of the ball
 	float ballcenterx = paddle->ball->x + paddle->ball->width / 2.0f;
@@ -475,7 +468,7 @@ void GameManager::CheckBoardCollisions()
 
 		// Ball lost
 		loseLife();
-		// TODO: deep sound nedtur sfx
+		// TODO: sfx
 	}
 
 	// Left and right collisions

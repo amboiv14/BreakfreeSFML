@@ -23,7 +23,7 @@ public:
 	int currentLevel = 0;
 
 private:
-	const int NUMBER_OF_LEVELS = 6;
+	const int NUMBER_OF_LEVELS = 1;
 	const int COLUMNS = 6;
 	const int ROWS = 19;
 
