@@ -1,18 +1,5 @@
 #include "GameManager.h"
 
-#include <assert.h>
-#include <fstream>
-#include <string>
-
-using namespace std;
-
-typedef char byte;
-
-template<typename T>
-byte* as_bytes(T* ptr) {
-	return reinterpret_cast<byte*>(ptr);
-}
-
 GameManager::GameManager()
 {
 }
@@ -75,12 +62,85 @@ void GameManager::winLevel()
 	std::cout << "Cleared level!" << std::endl;
 	if (!levelManager->loadNextLevel())
 	{
-		std::cout << "You won The game!" << std::endl;
+		std::cout << "You won the game!" << std::endl;
 		isPlaying = false;
 		gameState = 3;
 		return;
 	}
 	paddle->ResetPaddle();
+}
+
+void GameManager::sortScores()
+{
+	for (int i = 0; i < SCORE_SLOTS; i++)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			if (playerScores[i] > playerScores[j])
+			{
+				int temp = playerScores[i];
+				string temp2 = playerNames[i];
+
+				playerScores[i] = playerScores[j];
+				playerNames[i] = playerNames[j];
+
+				playerScores[j] = temp;
+				playerNames[j] = temp2;
+			}	
+		}
+	}
+}
+
+void GameManager::saveScores()
+{
+	// add player result
+	for (int i = 0; i < SCORE_SLOTS; i++)
+	{
+		if (playerScores[i] == 0)
+		{
+			playerScores[i] = score;
+			playerNames[i] = name;
+			break;
+		}
+	}
+	// save to file
+	ofstream file("highscores.txt");
+	if (file.is_open())
+	{
+		for (int i = 0; i < SCORE_SLOTS; i++)
+		{
+			file << playerScores[i];
+			file << " " << playerNames[i] << " ";
+		}
+		file.close();
+	}
+	else cout << "Unable to open file.\n";
+}
+
+void GameManager::loadScores()
+{
+	// load from file
+	string line;
+	ifstream file("highscores.txt");
+	if (file.is_open())
+	{
+		int counter = 0;
+		while (getline(file, line))
+		{
+			cout << line << '\n';
+		}
+		file.close();
+	}
+	else cout << "Unable to open file.\n";
+
+	// add to local variables
+	int i = 0;
+	stringstream ssin(line);
+	while (ssin.good() && i < 10) {
+		ssin >> playerScores[i];
+		ssin >> playerNames[i];
+		++i;
+	}
 }
 
 void GameManager::runGame()
@@ -122,6 +182,23 @@ void GameManager::runGame()
 			exit.setScale(0.6, 0.6);
 
 			sf::Mouse mouse;
+
+			loadScores();
+			sortScores();
+
+			sf::Text scores[10];
+			int lineSpacing = 0;
+			for (int i = 0; i < SCORE_SLOTS; i++)
+			{
+				if (playerScores[i] != 0)
+				{
+					scores[i].setString(std::to_string(playerScores[i]) + "  " + playerNames[i]);
+					scores[i].setPosition(460, 336 + lineSpacing);
+					scores[i].setFont(font);
+					scores[i].setCharacterSize(20);
+					lineSpacing += 22;
+				}
+			}
 
 			while (gameState == 0)
 			{
@@ -165,6 +242,11 @@ void GameManager::runGame()
 				window.draw(bg);
 				window.draw(start);
 				window.draw(exit);
+
+				for (int i = 0; i < SCORE_SLOTS; i++)
+				{
+					window.draw(scores[i]);
+				}
 
 				window.display();
 			}
@@ -240,18 +322,84 @@ void GameManager::runGame()
 		}
 		break;
 		case 2: // game over
+			// no more time to make game over screen (23:45)
+			gameover = true;
+			gameState = 3;
 			break;
 		case 3: // won the game
+
+			sf::Text text("You broke free!", font, 60);
+			text.setPosition(120, 60);
+			if (gameover)
+			{
+				text.setString("Game over!");
+			}
+
+			sf::Text text2("Enter your name: ", font, 20);
+			text2.setPosition(90, 280);
+
+			sf::Text text3("Press space to submit and continue.", font, 10);
+			text3.setPosition(90, 305);
+
+			sf::Text text4("Final score: " + std::to_string(score), font, 30);
+			text4.setPosition(120, 120);
+
+			string playerName;
+
+			sf::Sprite winbg;
+			sf::Texture tex_winbg;
+			if (!tex_winbg.loadFromFile("Textures/winbg.png"))
+				abort();
+			winbg.setTexture(tex_winbg);
+
 			while (gameState == 3)
 			{
+				// events
+				sf::Event event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == sf::Event::KeyPressed)
+					{
+						if (event.key.code == sf::Keyboard::Space)
+						{
+							name = playerName;
+							saveScores();
+							sortScores();
+							gameState = 0;
+						}
+					}
+					if (event.type == sf::Event::Closed)
+						window.close();
+					if (event.type == sf::Event::TextEntered)
+					{
+						if (event.text.unicode == 8)
+						{
+							playerName.pop_back();
+							text2.setString("Enter your name: " + playerName);
+						}
+						else
+						{
+							// ASCII characters only
+							if (event.text.unicode < 128)
+							{
+								playerName += static_cast<char>(event.text.unicode);
+								text2.setString("Enter your name: " + playerName);
+							}
+						}
+					}
+				}
+
 				// draw
 				window.clear();
 
-				sf::Text text("YOU WON THE GAME", font, 40);
-				text.setPosition(260, 220);
-				window.draw(text);
+				window.draw(winbg);
 
-				window.display();
+				window.draw(text);
+				window.draw(text2);
+				window.draw(text3);
+				window.draw(text4);
+
+				window.display();				
 			}
 			break;
 		}

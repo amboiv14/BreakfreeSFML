@@ -7,6 +7,12 @@
 #include "LevelManager.h"
 #include "InputManager.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
 class GameManager
 {
 public:
@@ -25,9 +31,14 @@ public:
 	float GetReflection(float hitx) const;
 	void GameOver();
 	void loseLife();
+	void saveScores();
+	void loadScores();
+	void sortScores();
 
 	const int SCREEN_WIDTH = 768;
 	const int SCREEN_HEIGHT = 608;
+
+	const int SCORE_SLOTS = 10;
 
 private:
 	int score = 0;
@@ -35,6 +46,13 @@ private:
 
 	int gameState = 0;
 	int level = 0;
+
+	string name = "<unknown>";
+
+	string playerNames[10];
+	int playerScores[10] = { 0 };
+
+	bool gameover;
 
 	sf::RenderWindow window;
 

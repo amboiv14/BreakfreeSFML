@@ -23,7 +23,7 @@ public:
 
 	sf::Sound sfxRelease;
 private:
-	float speed = 250.f;
+	float speed = 300.f;
 	float startX = 0, startY = 0;
 
 	void SetSpeed(float newSpeed);
