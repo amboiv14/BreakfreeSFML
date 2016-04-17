@@ -365,7 +365,8 @@ void GameManager::runGame()
 							name = playerName;
 							saveScores();
 							sortScores();
-							gameState = 0;
+							return;
+							//gameState = 0;
 						}
 					}
 					if (event.type == sf::Event::Closed)
@@ -429,6 +430,7 @@ float GameManager::GetReflection(float hitx) const
 
 void GameManager::GameOver()
 {
+	isPlaying = false;
 	gameState = 2;
 	std::cout << "Game Over" << std::endl;
 }
@@ -575,15 +577,16 @@ void GameManager::DrawGUI()
 
 int main()
 {
-	GameManager* gameManager = new GameManager;
-
-	if (gameManager->init())
+	while (true)
 	{
-		gameManager->runGame();
+		GameManager* gameManager = new GameManager;
+
+		if (gameManager->init())
+		{
+			gameManager->runGame();
+		}
+		delete gameManager;
 	}
-
-
-	delete gameManager;
 
 	return 0;
 }
