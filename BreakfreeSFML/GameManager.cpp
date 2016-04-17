@@ -362,7 +362,6 @@ void GameManager::CheckBrickCollisions()
 			float ballCenterX = paddle->ball->x + (paddle->ball->width / 2);
 			float ballCenterY = paddle->ball->y + (paddle->ball->height / 2);
 
-			//TODO:
 			if (ballCenterY <= brickCenterY + vicinityY && ballCenterY >= brickCenterY - vicinityY)
 			{
 				if (ballCenterX <= brickCenterX + vicinityX && ballCenterX >= brickCenterX - vicinityX)
@@ -379,7 +378,7 @@ void GameManager::CheckBrickCollisions()
 						sfxHit2.play();
 					}
 
-					//Tror denne burde være minst like stor som ballens movement speed, men ikke FOR stor
+					//sideWallPerimeter should be at least as high as the ball's movement speed, but not too high.
 					float sideWallPerimeter = 5.f;
 					if (ballCenterX + vicinityX <= brickCenterX + sideWallPerimeter)
 					{
