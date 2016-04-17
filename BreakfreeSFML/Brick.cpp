@@ -1,5 +1,6 @@
 #include "Brick.h"
 
+
 Brick::Brick()
 {
 	/*if (!texture.loadFromFile("Textures/brick0.png"))

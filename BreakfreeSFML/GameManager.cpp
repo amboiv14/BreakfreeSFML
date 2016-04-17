@@ -238,9 +238,8 @@ void GameManager::runGame()
 					// -- draw --
 					window.clear();
 
-					sf::Text text("Score: " + std::to_string(score), font, 20);
-					text.setPosition(660, 220);
-					window.draw(text);
+					DrawGUI();
+					
 
 					levelManager->Draw(window);
 					window.draw(paddle->sprite);
@@ -294,6 +293,22 @@ float GameManager::GetReflection(float hitx) const
 	return 2.0f * (hitx / (paddle->width / 2.0f));
 }
 
+void GameManager::GameOver()
+{
+	gameState = 2;
+	std::cout << "Game Over" << std::endl;
+}
+
+void GameManager::loseLife()
+{
+	lives--;
+	if (lives <= 0)
+	{
+		GameOver();
+	}
+	paddle->ResetPaddle();
+}
+
 void GameManager::CheckPaddleCollisions() // TODO: måtte fjerne const for å spille av lyd??
 {
 	// Get the center x-coordinate of the ball
@@ -323,7 +338,7 @@ void GameManager::CheckBoardCollisions()
 		// Bottom
 
 		// Ball lost
-		paddle->ResetPaddle();
+		loseLife();
 		// TODO: deep sound nedtur sfx
 	}
 
@@ -411,6 +426,17 @@ void GameManager::CheckBrickCollisions()
 			}	
 		}
 	}
+}
+
+void GameManager::DrawGUI()
+{
+	int GUIHeight = 220;
+	sf::Text GUILives("Lives x " + std::to_string(lives), font, 20);
+	sf::Text GUIScore("Score: " + std::to_string(score), font, 20);
+	GUILives.setPosition(20, GUIHeight);
+	GUIScore.setPosition(660, GUIHeight);
+	window.draw(GUILives);
+	window.draw(GUIScore);
 }
 
 int main()

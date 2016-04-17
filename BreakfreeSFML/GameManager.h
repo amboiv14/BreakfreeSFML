@@ -18,10 +18,13 @@ public:
 	void addScore(int bonus);
 	void winLevel();
 	void CheckBrickCollisions();
+	void DrawGUI();
 	void runGame();
 	void CheckPaddleCollisions();
 	void CheckBoardCollisions();
 	float GetReflection(float hitx) const;
+	void GameOver();
+	void loseLife();
 
 	const int SCREEN_WIDTH = 768;
 	const int SCREEN_HEIGHT = 608;

@@ -8,7 +8,7 @@ Paddle::Paddle(float x, float y, float width, float height):GameObject(x, y, wid
 		abort();
 	sprite.setTexture(texture);
 	//sprite.setTextureRect(sf::IntRect(x, y, width, height));
-	
+	startX = x, startY = y;
 	//centerPivotPoint();
 	ball = new Ball(x, y - height - 1, height, height);
 	ResetPaddle();
@@ -61,6 +61,8 @@ void Paddle::ReleaseBall()
 
 void Paddle::ResetPaddle()
 {
+	x = startX;
+	y = startY;
 	sprite.setPosition(x, y);
 	ball->ResetBall(x, y);
 	ballStuck = true;

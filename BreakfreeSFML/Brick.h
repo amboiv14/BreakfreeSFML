@@ -3,6 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
+#include <string>
 
 class Brick: public GameObject
 {
