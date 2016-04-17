@@ -28,10 +28,10 @@ bool GameManager::init()
 		std::cout << "Could not load score font" << std::endl;
 	}
 
-	if (!buf_hit0.loadFromFile("Sounds/sfxHit0.wav"),
-		!buf_hit1.loadFromFile("Sounds/sfxHit1.wav"),
-		!buf_hit2.loadFromFile("Sounds/sfxHit2.wav"),
-		!buf_paddle.loadFromFile("Sounds/sfxPaddle.wav"))
+	if (!buf_hit0.loadFromFile("Audio/sfxHit0.wav"),
+		!buf_hit1.loadFromFile("Audio/sfxHit1.wav"),
+		!buf_hit2.loadFromFile("Audio/sfxHit2.wav"),
+		!buf_paddle.loadFromFile("Audio/sfxPaddle.wav"))
 		abort();
 	sfxHit0.setBuffer(buf_hit0);
 	sfxHit1.setBuffer(buf_hit1);
@@ -195,6 +195,13 @@ void GameManager::runGame()
 		{
 			levelManager = new LevelManager;
 			paddle = new Paddle(300, 550, 128, 16);
+
+			sf::Music theme;
+			if (!theme.openFromFile("Audio/theme.ogg"))
+				abort();
+			theme.setVolume(80);
+			//theme.setLoop(true);
+			theme.play();
 
 			/*switch (level)
 			{

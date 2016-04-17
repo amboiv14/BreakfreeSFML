@@ -14,7 +14,7 @@ Paddle::Paddle(float x, float y, float width, float height):GameObject(x, y, wid
 	ResetPaddle();
 	std::cout << "paddles pos: x = " << x << " y = " << y << std::endl;
 
-	if (!buffer.loadFromFile("Sounds/sfxRelease.wav"))
+	if (!buffer.loadFromFile("Audio/sfxRelease.wav"))
 		abort();
 	sfxRelease.setBuffer(buffer);
 }
